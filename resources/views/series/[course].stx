@@ -1,0 +1,21 @@
+@extends('default')
+@section('content')
+<script server>
+import { learnApi, series } from '~/app/Support/academy'
+
+const slug = typeof course !== 'undefined' ? String(course) : ''
+const opened = slug ? await series(slug) : null
+if (!opened)
+  notFound()
+
+const here = `/series/${slug}`
+const pageTitle = opened ? opened.course.title : 'Series not found'
+const pageDescription = opened?.course.summary || ''
+const canonicalPath = here
+</script>
+<div class="mx-auto pt-10 px-4 md:px-8 max-w-6xl">
+  @if(opened)
+    <CursioPlayer :school="opened.school" :course="opened.course" :outline="opened.outline" home="/series" :path="here" :api="learnApi" />
+  @endif
+</div>
+@endsection

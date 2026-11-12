@@ -14,6 +14,8 @@ export default {
   content: [
     './resources/views/**/*.{stx,html}',
     './resources/**/*.{stx,html}',
+    // The catalog, the player and sign-in come from the Cursio package.
+    './node_modules/@cursio/academy/components/**/*.stx',
     './storage/framework/defaults/resources/views/**/*.{stx,html}',
     './storage/framework/defaults/resources/components/**/*.{stx,html}',
     './node_modules/@stacksjs/error-handling/dist/views/**/*.{stx,html}',
@@ -29,6 +31,33 @@ export default {
    * for.
    */
   minify: false,
+
+  /*
+   * LessonStack's tokens, and the names the Cursio components paint with.
+   * Each is a custom property set once in public/assets/styles/lessonstack.css
+   * with its dark value under prefers-color-scheme, so `bg-surface` follows
+   * the theme without a `dark:` twin.
+   */
+  theme: {
+    extend: {
+      colors: {
+        page: 'var(--page)',
+        surface: 'var(--surface)',
+        tint: 'var(--tint)',
+        ink: 'var(--ink)',
+        muted: 'var(--muted)',
+        line: 'var(--line)',
+        accent: 'var(--accent)',
+        'accent-ink': 'var(--accent-ink)',
+        'accent-soft': 'var(--accent-soft)',
+      },
+      fontFamily: {
+        sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['Bricolage Grotesque', 'Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['Geist Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
+    },
+  },
 
   /*
    * Classes that only exist at runtime, so no file names them: an icon chosen

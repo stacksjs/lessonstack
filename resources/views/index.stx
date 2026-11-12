@@ -1,41 +1,97 @@
 @extends('default')
 @section('content')
 <script server>
-/**
- * The starter page `buddy new` gives every app, at `/`.
- *
- * The document around it is `layouts/default.stx`, its <head> is
- * `resources/partials/head.stx`, and each row of the list is the `NextStep`
- * component from `resources/components`. Replace this file with your own
- * homepage and keep the three beside it.
- */
-import { config } from '@stacksjs/config'
+import { learnApi, openingEpisodes, series, shelf } from '~/app/Support/academy'
 
-const appName = config.app.name || 'My App'
-
-const nextSteps = [
-  { icon: 'i-hugeicons-file-edit', title: 'Edit this page', path: 'resources/views/index.stx' },
-  { icon: 'i-hugeicons-layout-01', title: 'Shape the document', path: 'resources/views/layouts/default.stx' },
-  { icon: 'i-hugeicons-database-01', title: 'Define a model', path: 'app/Models' },
-  { icon: 'i-hugeicons-route-01', title: 'Add an API route', path: 'routes/api.ts' },
-  { icon: 'i-hugeicons-settings-02', title: 'Configure the app', path: 'config/app.ts' },
-]
+// Everything on this page is read from the academy: the series, their
+// episodes and the three numbers under the headline.
+const { school, entries, totals } = await shelf()
+// The series a newcomer should open first: the one filed under getting
+// started, else any for beginners.
+const first = entries.find(entry => entry.topic === 'Getting started') || entries.find(entry => entry.level === 'beginner') || entries[0] || null
+const opened = first ? await series(first.slug) : null
+const opening = first && opened ? openingEpisodes(first.slug, opened.outline, 5) : []
+const canonicalPath = '/'
 </script>
-<div class="flex flex-col justify-center mx-auto px-6 py-16 max-w-2xl min-h-screen">
-  <p class="font-medium text-neutral-500 text-sm dark:text-neutral-400">Your app is running</p>
-  <h1 class="mt-2 font-semibold text-4xl tracking-tight">{{ appName }}</h1>
-  <p class="mt-4 text-neutral-600 dark:text-neutral-300">
-    Start with <code class="px-1.5 py-0.5 text-sm bg-neutral-200 dark:bg-neutral-800 rounded">./buddy dev</code>, then make it yours.
-  </p>
+<section class="mx-auto pt-14 px-4 md:pt-24 md:px-8 max-w-6xl">
+  <div class="grid gap-12 grid-cols-1 lg:grid-cols-12 lg:items-end">
+    <div class="lg:col-span-7">
+      <p class="font-medium text-accent text-sm">Learn the Stacks framework</p>
+      <h1 class="mt-4 max-w-[14ch] font-bold font-display leading-[0.98] text-5xl text-ink tracking-tight md:text-7xl">Learn Stacks by building with it.</h1>
+      <p class="mt-6 max-w-[52ch] leading-relaxed text-lg text-muted">Short episodes that take you from an empty folder to a deployed app. The first episode of every series is free, and your place is kept for you.</p>
+      <div class="flex flex-wrap gap-3 mt-8">
+        <a href="/series" class="inline-flex items-center px-6 h-12 font-medium text-accent-ink bg-accent rounded-full transition-transform active:scale-[0.98]">Browse the series</a>
+        <a href="/register" class="inline-flex items-center px-6 h-12 font-medium text-ink hover:bg-tint border border-line rounded-full transition-colors">Create a free account</a>
+      </div>
+      @if(totals.series > 0)
+        <dl class="flex flex-wrap gap-x-10 gap-y-4 mt-12">
+          <div>
+            <dt class="text-muted text-sm">Series</dt>
+            <dd class="mt-1 font-bold font-display tabular-nums text-3xl text-ink">{{ totals.series }}</dd>
+          </div>
+          <div>
+            <dt class="text-muted text-sm">Episodes</dt>
+            <dd class="mt-1 font-bold font-display tabular-nums text-3xl text-ink">{{ totals.episodes }}</dd>
+          </div>
+          @if(totals.time)
+            <div>
+              <dt class="text-muted text-sm">Running time</dt>
+              <dd class="mt-1 font-bold font-display tabular-nums text-3xl text-ink">{{ totals.time }}</dd>
+            </div>
+          @endif
+        </dl>
+      @endif
+    </div>
 
-  <ul class="mt-10 border-neutral-200 border-t dark:border-neutral-800">
-    @foreach(nextSteps as step)
-      <NextStep :icon="step.icon" :title="step.title" :path="step.path" />
-    @endforeach
-  </ul>
+    @if(first && opening.length > 0)
+      <aside class="lg:col-span-5" aria-labelledby="start-here">
+        <div class="p-6 bg-surface border border-line rounded-2xl">
+          <p id="start-here" class="font-medium text-muted text-sm">Start here</p>
+          <a href="/series/{{ first.slug }}" class="block mt-1 font-bold font-display text-2xl text-ink tracking-tight hover:text-accent transition-colors">{{ first.title }}</a>
+          <ol class="flex flex-col mt-5 divide-line divide-y">
+            @foreach(opening as episode)
+              <li>
+                <a href="{{ episode.href }}" class="flex gap-4 items-center py-3 text-sm hover:text-accent transition-colors">
+                  <span class="w-5 font-mono tabular-nums text-muted">{{ episode.number }}</span>
+                  <span class="flex-1 text-ink">{{ episode.title }}</span>
+                  @if(episode.free)
+                    <span class="px-2 py-0.5 font-medium text-accent text-xs bg-accent-soft rounded-full">Free</span>
+                  @endif
+                  <span class="font-mono tabular-nums text-muted">{{ episode.clock }}</span>
+                </a>
+              </li>
+            @endforeach
+          </ol>
+        </div>
+      </aside>
+    @endif
+  </div>
+</section>
 
-  <p class="mt-10 text-neutral-500 text-sm dark:text-neutral-400">
-    <a class="underline underline-offset-4 hover:text-neutral-900 dark:hover:text-neutral-100" href="https://stacksjs.com/docs">Read the Stacks docs</a>
-  </p>
-</div>
+<section class="mt-20 mx-auto px-4 md:mt-28 md:px-8 max-w-6xl" aria-labelledby="all-series">
+  <h2 id="all-series" class="font-bold font-display text-3xl text-ink tracking-tight">All series</h2>
+  @if(school)
+    <CursioCatalog :school="school" :entries="entries" home="/series" :api="learnApi" :heading="false" />
+  @else
+    <p class="mt-6 p-6 text-muted bg-tint rounded-2xl">The series list could not be loaded just now. Try again in a moment.</p>
+  @endif
+</section>
+
+<section class="mt-20 mx-auto px-4 md:mt-28 md:px-8 max-w-6xl" aria-labelledby="how-it-works">
+  <h2 id="how-it-works" class="font-bold font-display text-3xl text-ink tracking-tight">How it works</h2>
+  <div class="grid gap-x-10 gap-y-8 grid-cols-1 md:grid-cols-3 mt-8">
+    <div class="pt-5 border-ink border-t-2">
+      <h3 class="font-semibold text-ink text-lg">Open the first episode</h3>
+      <p class="mt-2 leading-relaxed text-muted">Every series starts with an episode anyone can open, no account needed. See how it teaches before you sign up.</p>
+    </div>
+    <div class="pt-5 border-line border-t-2">
+      <h3 class="font-semibold text-ink text-lg">Keep your place</h3>
+      <p class="mt-2 leading-relaxed text-muted">Enroll with a free account and each episode you finish is ticked off. Come back and the next one is waiting.</p>
+    </div>
+    <div class="pt-5 border-line border-t-2">
+      <h3 class="font-semibold text-ink text-lg">Finish with a certificate</h3>
+      <p class="mt-2 leading-relaxed text-muted">Complete a series and you get a certificate with its own link, so anyone you send it to can check it.</p>
+    </div>
+  </div>
+</section>
 @endsection

@@ -1,0 +1,10 @@
+@extends('default')
+@section('content')
+<script server>
+const pageTitle = 'Sign in'
+const canonicalPath = '/login'
+</script>
+<div class="mx-auto pt-16 px-4 md:px-8 max-w-6xl">
+  <CursioSignIn mode="login" auth="/api/cursio" home="/series" />
+</div>
+@endsection

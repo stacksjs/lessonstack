@@ -9,7 +9,7 @@ import { env } from '@stacksjs/env'
  * you have any questions, feel free to reach out via Discord or GitHub Discussions.
  */
 export default {
-  name: env.APP_NAME ?? 'Lessonstack',
+  name: env.APP_NAME ?? 'LessonStack',
   // Shown on the starter page, the coming-soon page, and any page that sets
   // no description of its own.
   description: '',

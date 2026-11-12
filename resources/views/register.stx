@@ -1,0 +1,10 @@
+@extends('default')
+@section('content')
+<script server>
+const pageTitle = 'Create your account'
+const canonicalPath = '/register'
+</script>
+<div class="mx-auto pt-16 px-4 md:px-8 max-w-6xl">
+  <CursioSignIn mode="register" auth="/api/cursio" home="/series" />
+</div>
+@endsection

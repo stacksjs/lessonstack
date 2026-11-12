@@ -1,0 +1,33 @@
+<script server>
+import { navLinks, site } from '~/resources/data/site'
+</script>
+<script client>
+import { useAuth } from '~/storage/framework/defaults/functions/auth'
+
+// The token is the session. The bar stays on screen while pages change under
+// it, so it reads the token itself rather than a copy taken when it mounted.
+const session = useAuth()
+const signedIn = derived(() => Boolean(session.token.value))
+
+function signOut() {
+  session.token.value = ''
+  session.user.value = null
+  navigate('/')
+}
+</script>
+<header class="sticky top-0 z-40 bg-page/85 border-b border-line backdrop-blur">
+  <nav class="flex gap-6 items-center justify-between mx-auto px-4 md:px-8 h-16 max-w-6xl" aria-label="Main">
+    <a href="/" class="flex gap-2 items-center font-bold font-display text-ink text-xl tracking-tight">
+      <span class="grid place-items-center size-7 text-accent-ink bg-accent rounded-lg" aria-hidden="true"><span class="size-4 i-hugeicons-play"></span></span>
+      {{ site.name }}
+    </a>
+    <div class="flex gap-1 items-center sm:gap-2">
+      @foreach(navLinks as link)
+        <a href="{{ link.href }}" class="inline-flex items-center px-3 h-10 text-muted text-sm hover:text-ink transition-colors">{{ link.label }}</a>
+      @endforeach
+      <a href="/login" class="inline-flex items-center px-3 h-10 text-muted text-sm hover:text-ink transition-colors" :hidden="signedIn()">Sign in</a>
+      <a href="/register" class="inline-flex items-center px-4 h-10 font-medium text-accent-ink text-sm whitespace-nowrap bg-accent rounded-full transition-transform active:scale-[0.98]" :hidden="signedIn()">Start free</a>
+      <button type="button" class="inline-flex items-center px-3 h-10 text-muted text-sm hover:text-ink transition-colors" :hidden="!signedIn()" hidden @click="signOut()">Sign out</button>
+    </div>
+  </nav>
+</header>
