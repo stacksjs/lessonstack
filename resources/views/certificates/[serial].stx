@@ -1,0 +1,18 @@
+@extends('default')
+@section('content')
+<script server>
+import { certificate } from '~/app/Support/academy'
+
+// Anyone holding a serial may check it here. The page shows what the
+// certificate says and nothing more about the learner.
+const given = typeof serial !== 'undefined' ? String(serial) : ''
+const found = await certificate(given)
+
+const pageTitle = found ? `${found.learnerName} - ${found.courseTitle}` : 'Certificate not found'
+const pageDescription = found ? `Certificate of completion for ${found.courseTitle}.` : 'No certificate has this serial.'
+const canonicalPath = `/certificates/${given}`
+</script>
+<div class="mx-auto px-4 md:px-8 pt-14 max-w-4xl">
+  <CursioCertificate :certificate="found" />
+</div>
+@endsection

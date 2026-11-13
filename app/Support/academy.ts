@@ -1,4 +1,4 @@
-import type { Academy, CatalogEntry, Course, Outline } from '@cursio/academy'
+import type { Academy, CatalogEntry, Certificate, Course, Outline } from '@cursio/academy'
 import { createCursio, runtime } from '@cursio/academy'
 import { env } from '@stacksjs/env'
 
@@ -74,4 +74,14 @@ export function openingEpisodes(slug: string, outline: Outline, count: number): 
     free: Boolean(lesson.is_preview),
     href: `/series/${slug}?episode=${index + 1}`,
   }))
+}
+
+/** A certificate this school issued, by the serial printed on it, or null. */
+export async function certificate(serial: string): Promise<Certificate | null> {
+  try {
+    return await cursio().certificate(serial)
+  }
+  catch {
+    return null
+  }
 }
