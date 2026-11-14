@@ -58,11 +58,11 @@
   },
   "dependencies": {
     "@cursio/academy": "^0.1.7",
-    "@stacksjs/actions": "^0.75.575",
-    "@stacksjs/env": "^0.75.575",
-    "@stacksjs/path": "^0.75.575",
-    "@stacksjs/stx": "0.2.864",
-    "stacks": "^0.75.575"
+    "@stacksjs/actions": "^0.75.584",
+    "@stacksjs/env": "^0.75.584",
+    "@stacksjs/path": "^0.75.584",
+    "@stacksjs/stx": "0.2.875",
+    "stacks": "^0.75.584"
   },
   "workspaces": [
     "storage/framework",
@@ -79,9 +79,9 @@
   },
   "devDependencies": {
     "@actions/expressions": "0.3.61",
-    "@stacksjs/components": "0.2.864",
-    "better-dx": "^0.2.37",
-    "bun-plugin-stx": "0.2.864"
+    "@stacksjs/components": "0.2.875",
+    "better-dx": "^0.2.40",
+    "bun-plugin-stx": "0.2.876"
   },
   "overrides": {
     "ts-images": "https://registry.pantry.dev/ts-images@22073a9",
